@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 ARG NODE_VERSION=23.9.0
-FROM node:${NODE_VERSION}-alpine AS frontend_build_image
+FROM node:${NODE_VERSION}-alpine AS frontend_build
 ENV NODE_ENV=production
 WORKDIR /usr/src/app
 RUN --mount=type=bind,source=package.json,target=package.json \
@@ -13,5 +13,5 @@ RUN mkdir build && chmod 777 build
 COPY . .
 RUN yarn build
 
-FROM nginx
-COPY --from=frontend_build_image /usr/src/app/build /usr/share/nginx/html
+FROM nginx AS frontend
+COPY --from=frontend_build /usr/src/app/build /usr/share/nginx/html
